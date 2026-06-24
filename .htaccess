@@ -1,0 +1,11 @@
+# Defense-in-depth: the project root must NEVER be a document root.
+# The web server's DocumentRoot must point at the public/ directory.
+# If it is ever misconfigured to serve the project root, this denies all
+# access so config.yaml / credentials / src cannot be read over HTTP.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>

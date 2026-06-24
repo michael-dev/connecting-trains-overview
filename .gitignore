@@ -1,0 +1,15 @@
+# Secrets — never commit (contain live DB API credentials)
+/config.yaml
+/credentials
+
+# Runtime data: decision log, poll log, StaDa cache
+/data/
+
+# Generated on install via `php bin/update-stations.php`
+/resources/stations.tsv
+
+# Editor / OS noise
+*.swp
+*.tmp
+*~
+.DS_Store

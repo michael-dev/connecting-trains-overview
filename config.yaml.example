@@ -1,0 +1,15 @@
+# Copy to config.yaml and fill in your DB API Marketplace credentials.
+# (config.yaml is git-ignored so the secrets stay out of the repo.)
+#
+# The same client id / api key must be subscribed to the
+# "Timetables" and "StaDa – Station Data" APIs at
+# https://developers.deutschebahn.com/db-api-marketplace/
+backend:
+  clientid: YOUR_DB_CLIENT_ID
+  apikey: YOUR_DB_API_KEY
+
+# Default / reference station: shown on first load and the only station the
+# decision log is kept for. Use the StaDa station name and its EVA number.
+station:
+  name: "Frankfurt (Main) Hbf"
+  eva: 8000105
