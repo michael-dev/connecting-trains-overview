@@ -70,5 +70,16 @@ check('history chain w,n,x', ['w', 'n', 'x'], $chain);
 check('outbound name preserved', 'ICE 1651', $rec['outbound']['name']);
 
 @unlink($path);
+
+// Configurable retention: a decision last seen beyond the window is pruned.
+$rpath = sys_get_temp_dir() . '/bahn_log_ret_' . getmypid() . '.json';
+@unlink($rpath);
+$rlog = new ConnectionLog($rpath, 5); // keep 5 days
+$rlog->record([conn(WaitingConnection::STATUS_WAITING)], new DateTimeImmutable('2026-06-01 12:00', $tz));
+$rlog->record([], new DateTimeImmutable('2026-06-01 12:05', $tz)); // decision ends (last seen ~12:05)
+$rlog->record([], new DateTimeImmutable('2026-06-20 12:00', $tz)); // 19 days later > 5-day retention
+check('retention prunes records older than the window', 0, count($rlog->load()['records']));
+@unlink($rpath);
+
 echo $failures === 0 ? "\nALL TESTS PASSED\n" : "\n{$failures} TEST(S) FAILED\n";
 exit($failures === 0 ? 0 : 1);

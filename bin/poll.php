@@ -27,7 +27,7 @@ try {
     $now  = new DateTimeImmutable('now', new DateTimeZone('Europe/Berlin'));
     $data = $finder->find($eva, $now);
 
-    $log   = new Bahn\ConnectionLog($root . '/data/connection_log.json');
+    $log   = new Bahn\ConnectionLog($root . '/data/connection_log.json', $config->logRetentionDays());
     $stats = $log->record($data['waiting'], $now);
 
     printf(

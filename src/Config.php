@@ -73,6 +73,47 @@ final class Config
         return is_numeric($v) ? (int) $v : DEFAULT_EVA;
     }
 
+    /** Hours of timetable to fetch before/after now (config `board.hours_back|hours_ahead`). */
+    public function boardHoursBack(): int
+    {
+        return max(0, $this->intValue('board', 'hours_back', 3));
+    }
+
+    public function boardHoursAhead(): int
+    {
+        return max(0, $this->intValue('board', 'hours_ahead', 4));
+    }
+
+    /** Seconds the board snapshot is cached server-side (config `board.cache_ttl`). */
+    public function boardCacheTtl(): int
+    {
+        return max(0, $this->intValue('board', 'cache_ttl', 45));
+    }
+
+    /** Web UI auto-refresh interval in seconds (config `board.refresh_seconds`). */
+    public function boardRefreshSeconds(): int
+    {
+        return max(5, $this->intValue('board', 'refresh_seconds', 60));
+    }
+
+    /** Days to keep decision-log records (config `log.retention_days`). */
+    public function logRetentionDays(): int
+    {
+        return max(1, $this->intValue('log', 'retention_days', 365));
+    }
+
+    /** Poller interval in seconds (config `poll.interval_seconds`). */
+    public function pollIntervalSeconds(): int
+    {
+        return max(10, $this->intValue('poll', 'interval_seconds', 60));
+    }
+
+    private function intValue(string $section, string $key, int $default): int
+    {
+        $v = $this->data[$section][$key] ?? null;
+        return is_numeric($v) ? (int) $v : $default;
+    }
+
     /**
      * Minimal YAML reader for a one-level-nested mapping of scalars.
      * Good enough for config.yaml; not a general YAML implementation.

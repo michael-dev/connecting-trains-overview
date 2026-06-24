@@ -73,7 +73,21 @@ backend:
 station:
   name: "Frankfurt (Main) Hbf"
   eva: 8000105
+
+# Optional tuning (values shown are the defaults):
+board:
+  hours_back: 3         # timetable hours fetched before now (catches delayed trains)
+  hours_ahead: 4        # timetable hours fetched ahead — drives the API call count
+  cache_ttl: 45         # seconds the board snapshot is cached server-side
+  refresh_seconds: 60   # web UI auto-refresh interval
+log:
+  retention_days: 365   # how long decision-log records are kept
+poll:
+  interval_seconds: 60  # bin/poll-loop.sh cadence
 ```
+
+All keys are optional; omitted ones fall back to the defaults above. Values are clamped to
+sane minimums.
 
 ## Requirements
 
@@ -242,6 +256,7 @@ tests/
   board_features_test.php         Offline test of cancellations/window/wings/messages
   board_cache_test.php            Offline test of the short-TTL board cache
   board_eva_resolution_test.php   Offline test of split-station EVA resolution
+  config_test.php                 Offline test of the configurable tuning keys
 src/
   bootstrap.php                   Autoloader + factories
   Config.php                      Reads config.yaml

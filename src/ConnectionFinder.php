@@ -14,8 +14,12 @@ final class ConnectionFinder
 
     private const EVA_CACHE_TTL = 604800; // 7 days — station topology is stable
 
-    public function __construct(private TimetablesSource $client, private ?string $evaCacheDir = null)
-    {
+    public function __construct(
+        private TimetablesSource $client,
+        private ?string $evaCacheDir = null,
+        private int $defaultHoursBack = 3,
+        private int $defaultHoursAhead = 4
+    ) {
     }
 
     /** Resolve a station name/pattern to its EVA number. */
@@ -125,9 +129,13 @@ final class ConnectionFinder
      *
      * The window spans $hoursBack hours before to $hoursAhead hours after $now,
      * so heavily delayed trains (planned earlier, running now) still appear.
+     * When the hour bounds are null the per-instance defaults are used.
      */
-    public function find(int $eva, ?\DateTimeImmutable $now = null, int $hoursBack = 3, int $hoursAhead = 4): array
+    public function find(int $eva, ?\DateTimeImmutable $now = null, ?int $hoursBack = null, ?int $hoursAhead = null): array
     {
+        $hoursBack  ??= $this->defaultHoursBack;
+        $hoursAhead ??= $this->defaultHoursAhead;
+
         $tz  = new \DateTimeZone(self::TZ);
         $now ??= new \DateTimeImmutable('now', $tz);
         $now = $now->setTimezone($tz);

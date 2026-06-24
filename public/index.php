@@ -71,12 +71,16 @@ function historyChain(array $history): string
 /* ----- data ----- */
 $cfgPath = __DIR__ . '/../config.yaml';
 try {
-    $cfg         = Bahn\Config::load($cfgPath);
-    $defaultName = $cfg->defaultStationName();
-    $defaultEva  = $cfg->defaultEva();
+    $cfg            = Bahn\Config::load($cfgPath);
+    $defaultName    = $cfg->defaultStationName();
+    $defaultEva     = $cfg->defaultEva();
+    $refreshSeconds = $cfg->boardRefreshSeconds();
+    $boardCacheTtl  = $cfg->boardCacheTtl();
 } catch (Throwable) {
-    $defaultName = Bahn\DEFAULT_STATION;
-    $defaultEva  = Bahn\DEFAULT_EVA;
+    $defaultName    = Bahn\DEFAULT_STATION;
+    $defaultEva     = Bahn\DEFAULT_EVA;
+    $refreshSeconds = 60;
+    $boardCacheTtl  = 45;
 }
 
 $station  = substr(trim((string) ($_GET['station'] ?? '')), 0, 60);
@@ -116,7 +120,7 @@ try {
     if ($eva === null) {
         $error = "Station „{$station}“ konnte nicht gefunden werden.";
     } else {
-        $data = Bahn\find_cached($finder, $eva, __DIR__ . '/../data/cache/board');
+        $data = Bahn\find_cached($finder, $eva, __DIR__ . '/../data/cache/board', $boardCacheTtl);
     }
 } catch (Throwable $ex) {
     $error = $ex->getMessage();
@@ -145,7 +149,7 @@ if ($isDefaultStation) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="refresh" content="60">
+<meta http-equiv="refresh" content="<?= (int) $refreshSeconds ?>">
 <title>Anschlüsse · <?= e($station) ?></title>
 <style>
   :root { --db:#ec0016; --ink:#1a1a1a; --muted:#6b7280; --line:#e5e7eb; --bg:#f5f6f8; }

@@ -13,3 +13,16 @@ backend:
 station:
   name: "Frankfurt (Main) Hbf"
   eva: 8000105
+
+# Optional tuning (values shown are the defaults).
+board:
+  hours_back: 3         # hours of timetable to fetch before now (catches delayed trains)
+  hours_ahead: 4        # hours to fetch ahead
+  cache_ttl: 45         # seconds the board snapshot is cached server-side
+  refresh_seconds: 60   # web UI auto-refresh interval
+
+log:
+  retention_days: 365   # how long to keep decision-log records
+
+poll:
+  interval_seconds: 60  # bin/poll-loop.sh poll cadence

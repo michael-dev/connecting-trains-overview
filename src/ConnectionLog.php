@@ -19,11 +19,11 @@ final class ConnectionLog
     /** Synthetic status used when a decision is no longer reported by DB. */
     public const STATUS_ENDED = 'x';
 
-    /** Records whose last sighting is older than this are pruned (seconds). */
-    private const RETENTION = 365 * 24 * 3600;
+    private int $retentionSeconds;
 
-    public function __construct(private string $path)
+    public function __construct(private string $path, int $retentionDays = 365)
     {
+        $this->retentionSeconds = max(1, $retentionDays) * 24 * 3600;
     }
 
     /** @return array{lastPoll:?string, records:array<string,array<string,mixed>>} */
@@ -169,7 +169,7 @@ final class ConnectionLog
      */
     private function prune(array $records, \DateTimeImmutable $now): array
     {
-        $cutoff = $now->getTimestamp() - self::RETENTION;
+        $cutoff = $now->getTimestamp() - $this->retentionSeconds;
         foreach ($records as $key => $rec) {
             $last = isset($rec['lastSeen']) ? strtotime((string) $rec['lastSeen']) : false;
             if ($last !== false && $last < $cutoff) {

@@ -31,7 +31,12 @@ function make_finder(string $configPath): ConnectionFinder
 {
     $config = Config::load($configPath);
     $client = new TimetablesClient($config->clientId(), $config->apiKey());
-    return new ConnectionFinder($client, \dirname($configPath) . '/data/cache/eva');
+    return new ConnectionFinder(
+        $client,
+        \dirname($configPath) . '/data/cache/eva',
+        $config->boardHoursBack(),
+        $config->boardHoursAhead()
+    );
 }
 
 /** Build a cached StaDa station-search client (cache under <root>/data/cache). */
